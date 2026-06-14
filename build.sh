@@ -1,0 +1,16 @@
+mkdir -p build
+
+CFILES=$(find src/kernel -name "*.c")
+
+for file in $CFILES; do
+    obj="build/$(basename "${file%.c}").o"
+    x86_64-elf-gcc -ffreestanding -m32 -g -c "$file" -o "$obj"
+done
+
+nasm -f elf32 src/kernel/boot/kernel_entry.asm -o build/kernel_entry.o
+x86_64-elf-ld -m elf_i386 -o build/kernel.bin -Ttext 0x90000 build/*.o --oformat binary
+nasm -f bin src/kernel/boot/boot.asm -o build/boot.bin
+
+dd if=/dev/zero of=neodos.img bs=512 count=2880
+dd if=build/boot.bin of=neodos.img conv=notrunc
+dd if=build/kernel.bin of=neodos.img bs=512 seek=1 conv=notrunc
