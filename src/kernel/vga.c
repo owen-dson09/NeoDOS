@@ -1,7 +1,5 @@
 #include "vga.h"
-
-#define uint8_t unsigned char
-#define uint16_t unsigned short
+#include "include/util.h"
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -33,7 +31,7 @@ void get_cursor_xy(int *x, int *y) {
     *y = pos / VGA_WIDTH;
 }
 
-void vclear() {
+void vga_clear() {
     for (int y = 0; y < VGA_HEIGHT; y++) {
         for (int x = 0; x < VGA_WIDTH; x++) {
             const int index = y * VGA_WIDTH + x;
@@ -42,7 +40,7 @@ void vclear() {
     }
 }
 
-void vclear_line() {
+void vga_clear_line() {
     int pos = get_cursor_pos();
     int y = pos / VGA_WIDTH;
 
@@ -52,11 +50,11 @@ void vclear_line() {
     }
 }
 
-void vscroll(int y) {
+void vga_scroll(int y) {
     if (y <= 0) return;
 
     if (y >= VGA_HEIGHT) {
-        vclear();
+        vga_clear();
         return;
     }
 
@@ -72,22 +70,29 @@ void vscroll(int y) {
         vga_buffer[i] = (uint16_t)' ' | (uint16_t)(VGA_COL_WHITE_ON_BLACK << 8);
     }
 }
+/*
+void vga_putc(char c, uint8_t color, int x, int y) {
+    if (x < 0 || x >= VGA_WIDTH || y < 0 || y >= VGA_HEIGHT) return;
 
-void vputc(char c, uint8_t color, int x, int y) {
+    const int index = y * VGA_WIDTH + x;
+    vga_buffer[index] = (uint16_t)c | (uint16_t)(color << 8);
+}*/
+
+void vga_putc(char c, uint8_t color, int x, int y) {
     if (x < 0 || x >= VGA_WIDTH || y < 0 || y >= VGA_HEIGHT) return;
 
     const int index = y * VGA_WIDTH + x;
     vga_buffer[index] = (uint16_t)c | (uint16_t)(color << 8);
 }
 
-void vwrite(const char *str) {
+void vga_write(const char *str) {
     uint16_t pos = get_cursor_pos();
     int x = pos % VGA_WIDTH;
     int y = pos / VGA_WIDTH;
 
     for (int i = 0; str[i] != '\0'; i++) {
         if (x >= VGA_WIDTH) break;
-        vputc(str[i], VGA_COL_WHITE_ON_BLACK, x, y);
+        vga_putc(str[i], VGA_COL_WHITE_ON_BLACK, x, y);
         x++;
     }
 
@@ -99,12 +104,12 @@ void vwrite(const char *str) {
     set_cursor_pos(x, y);
 }
 
-void vprint(const char *str) {
+void vga_print(const char *str) {
     int x, y;
     get_cursor_xy(&x, &y);
 
     for (int i = 0; str[i] != '\0'; i++) {
-        vputc(str[i], VGA_COL_WHITE_ON_BLACK, x, y);
+        vga_putc(str[i], VGA_COL_WHITE_ON_BLACK, x, y);
         x++;
 
         if (x >= VGA_WIDTH) {
@@ -112,7 +117,7 @@ void vprint(const char *str) {
             y++;
 
             if (y >= VGA_HEIGHT) {
-                vscroll(1);
+                vga_scroll(1);
                 y = VGA_HEIGHT - 1;
             }
         }
@@ -122,7 +127,7 @@ void vprint(const char *str) {
     y++;
 
     if (y >= VGA_HEIGHT) {
-        vscroll(1);
+        vga_scroll(1);
         y = VGA_HEIGHT - 1;
     }
 

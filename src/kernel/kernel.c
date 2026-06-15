@@ -1,6 +1,7 @@
 #include "vga.h"
+#include "include/util.h"
 
 void main() {
-    vprint("NeoDOS Kernel Loaded!");
+    vga_print("NeoDOS Kernel Loaded!");
     return;
 }

@@ -14,9 +14,8 @@ start:
     mov ss, ax
     mov sp, 0x7C00
 
-    mov ax, 0x9000
+    mov ax, 0x9000              ; Setup segment for kernel entry (0x9000:0000)
     mov es, ax
-    sti
 
     ; Clear screen (set video mode to 80x25 text mode)
     mov ah, 0x00
@@ -24,7 +23,7 @@ start:
     int 0x10
 
     ; Read sector from disk into memory
-    mov ax, 0x0210              ; AH = 0x02 (read sectors), AL = 16 (num sectors)
+    mov ax, 0x0214              ; AH = 0x02 (read sectors), AL = 20 (num sectors)
     mov cx, 0x0002              ; CH = 0 (cylinder), CL = 2 (sector)
     mov dh, 0x00                ; DH = 0 (head), DL = boot disk
     mov dl, [BOOT_DRIVE]
@@ -47,7 +46,7 @@ load_pm:
 
 
 disk_retry:
-    mov ax, 0x0210
+    mov ax, 0x0214
     mov cx, 0x0002
     mov dh, 0x00
     mov dl, [BOOT_DRIVE]

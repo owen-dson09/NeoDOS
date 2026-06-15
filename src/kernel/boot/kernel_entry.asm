@@ -1,6 +1,10 @@
 [BITS 32]
-[extern main]
-call main
+section .text.start
+global _start
+extern main
+
+_start:
+    call main
 cli
 hlt
 jmp $
