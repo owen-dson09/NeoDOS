@@ -9,7 +9,7 @@ for file in $CFILES; do
     x86_64-elf-gcc -ffreestanding -m32 -g -c "$file" -o "$obj"
 done
 
-nasm -f elf32 src/kernel/boot/kernel_entry.asm -o build/kernel_entry.o
+nasm -f elf32 src/kernel/kernel_entry.asm -o build/kernel_entry.o
 
 OBJ_FILES=$(find build -name "*.o" ! -name "kernel_entry.o")
 
