@@ -70,13 +70,6 @@ void vga_scroll(int y) {
         vga_buffer[i] = (uint16_t)' ' | (uint16_t)(VGA_COL_WHITE_ON_BLACK << 8);
     }
 }
-/*
-void vga_putc(char c, uint8_t color, int x, int y) {
-    if (x < 0 || x >= VGA_WIDTH || y < 0 || y >= VGA_HEIGHT) return;
-
-    const int index = y * VGA_WIDTH + x;
-    vga_buffer[index] = (uint16_t)c | (uint16_t)(color << 8);
-}*/
 
 void vga_putc(char c, uint8_t color, int x, int y) {
     if (x < 0 || x >= VGA_WIDTH || y < 0 || y >= VGA_HEIGHT) return;
