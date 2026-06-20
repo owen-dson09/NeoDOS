@@ -22,16 +22,16 @@ void main() {
     idt_init();
     pic_remap();
 
-    // Mask PIC
+    // Mask PIC (ignore hardware interrupts)
     for (int i = 0; i < 16; i++) {
         pic_set_mask(i);
     }
-    keyboard_init(key_press);
 
-    vga_print("NeoDOS");
+    keyboard_init(key_press);       // Enable keyboard, set callback
 
-    __asm__ __volatile__("sti"); // Enable interrupts
+    vga_print("NeoDOS");            // Welcome message
 
+    __asm__ __volatile__("sti");    // Enable interrupts
 
     while (1) {
         __asm__ __volatile__("hlt");
