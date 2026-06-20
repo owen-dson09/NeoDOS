@@ -1,14 +1,14 @@
 #ifndef ISR_H
 #define ISR_H
 
-#include "../include/util.h"
+#include "util.h"
 
 typedef struct registers {
     uint32_t ds;
 
     uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
 
-    uint32_t int_no;
+    uint32_t int_num;
     uint32_t err_code;
 
     uint32_t eip;

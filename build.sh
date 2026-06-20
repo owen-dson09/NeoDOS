@@ -9,7 +9,7 @@ CFILES=$(find src/kernel -name "*.c")
 
 for file in $CFILES; do
     obj="build/$(basename "${file%.c}").o"
-    x86_64-elf-gcc -ffreestanding -m32 -g -c "$file" -o "$obj"
+    x86_64-elf-gcc -ffreestanding -m32 -I./include -g -c "$file" -o "$obj"
 done
 
 OBJ_FILES=$(find build -name "*.o" ! -name "kernel_entry.o")

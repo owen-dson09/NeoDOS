@@ -17,7 +17,7 @@ start:
     mov ax, 0x9000              ; Setup segment for kernel entry (0x9000:0000)
     mov es, ax
 
-    ; Clear screen (set video mode to 80x25 text mode)
+    ; Clear screen (set video mode to 80x25 text mode), set cursor pos to (0, 0)
     mov ah, 0x00
     mov al, 0x03
     int 0x10

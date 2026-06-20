@@ -1,6 +1,7 @@
 [BITS 32]
 section .text
 extern isr_handler
+extern irq_handler
 global isr_default_stub
 
 %macro ISR_NOERR 1
@@ -18,6 +19,14 @@ isr%1:
     cli
     push dword %1       ; interrupt number
     jmp isr_common_stub
+%endmacro
+
+%macro IRQ 2
+global irq%1
+irq%1:
+    push dword 0        ; fake error code
+    push dword %2       ; interrupt number
+    jmp irq_common_stub
 %endmacro
 
 isr_common_stub:
@@ -53,6 +62,33 @@ isr_default_stub:
     popa
     iret
 
+irq_common_stub:
+    pusha
+
+    mov ax, ds
+    push eax
+
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    push esp
+    call irq_handler
+    add esp, 4
+
+    pop eax
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    popa
+
+    add esp, 8
+    iret
+
 ISR_NOERR 0
 ISR_NOERR 1
 ISR_NOERR 2
@@ -85,3 +121,20 @@ ISR_NOERR 28
 ISR_NOERR 29
 ISR_ERR   30
 ISR_NOERR 31
+
+IRQ 0, 32
+IRQ 1, 33
+IRQ 2, 34
+IRQ 3, 35
+IRQ 4, 36
+IRQ 5, 37
+IRQ 6, 38
+IRQ 7, 39
+IRQ 8, 40
+IRQ 9, 41
+IRQ 10, 42
+IRQ 11, 43
+IRQ 12, 44
+IRQ 13, 45
+IRQ 14, 46
+IRQ 15, 47

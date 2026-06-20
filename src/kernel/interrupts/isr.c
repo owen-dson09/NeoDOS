@@ -39,9 +39,7 @@ static const char *exception_messages[] = {
 void isr_handler(registers_t *regs) {
     vga_print("CPU Exception: ");
 
-    if (regs->int_no < 32) {
-        vga_print(exception_messages[regs->int_no]);
-    } else {
-        vga_print("Unknown interrupt");
+    if (regs->int_num < 32) {
+        vga_print(exception_messages[regs->int_num]);
     }
 }

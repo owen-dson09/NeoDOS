@@ -1,11 +1,23 @@
 #include "vga.h"
 #include "idt.h"
-#include "include/util.h"
+#include "interrupts/pic.h"
+#include "util.h"
 
 void main() {
     idt_init();
-    //__asm__ __volatile__("sti"); // Enable interrupts
+    pic_remap();
 
-    vga_print("NeoDOS Kernel Loaded!");
+    // Mask PIC
+    for (int i = 0; i < 16; i++) {
+        pic_set_mask(i);
+    }
+    pic_clear_mask(0); // timer irq
+
+    vga_print("NeoDOS");
+
+    __asm__ __volatile__("sti"); // Enable interrupts
+
+
+    
     return;
 }
