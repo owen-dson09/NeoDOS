@@ -5,5 +5,7 @@ extern main
 
 _start:
     call main
-hlt
-jmp $
+    
+.halt:
+    hlt
+    jmp .halt
