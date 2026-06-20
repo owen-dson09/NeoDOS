@@ -1,5 +1,5 @@
 #include "isr.h"
-#include "../vga.h"
+#include "../drivers/vga.h"
 
 static const char *exception_messages[] = {
     "Division By Zero",

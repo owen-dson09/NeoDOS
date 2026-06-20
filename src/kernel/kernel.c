@@ -1,4 +1,4 @@
-#include "vga.h"
+#include "drivers/vga.h"
 #include "idt.h"
 #include "interrupts/pic.h"
 #include "util.h"
@@ -18,6 +18,6 @@ void main() {
     __asm__ __volatile__("sti"); // Enable interrupts
 
 
-    
+
     return;
 }

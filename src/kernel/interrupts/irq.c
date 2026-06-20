@@ -1,6 +1,6 @@
 #include "irq.h"
 #include "pic.h"
-#include "../vga.h"
+#include "../drivers/vga.h"
 
 static uint32_t ticks = 0;
 
