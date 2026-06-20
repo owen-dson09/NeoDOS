@@ -4,9 +4,10 @@
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 
-#define VGA_COL_WHITE_ON_BLACK 0x07
+#define VGA_DEFAULT_COL 0x07    // Light gray on black
 
 uint16_t* const vga_buffer = (uint16_t*)0xB8000;
+static uint8_t text_color = VGA_DEFAULT_COL;
 
 void set_cursor_pos(int x, int y) {
     uint16_t pos = y * VGA_WIDTH + x;
@@ -31,11 +32,19 @@ void get_cursor_xy(int *x, int *y) {
     *y = pos / VGA_WIDTH;
 }
 
+void set_text_color(uint8_t color) {
+    text_color = (text_color & 0xF0) | color;
+}
+
+void set_background_color(uint8_t color) {
+    text_color = (text_color & 0x0F) | (color << 4);
+}
+
 void vga_clear() {
     for (int y = 0; y < VGA_HEIGHT; y++) {
         for (int x = 0; x < VGA_WIDTH; x++) {
             const int index = y * VGA_WIDTH + x;
-            vga_buffer[index] = (uint16_t)' ' | (uint16_t)(VGA_COL_WHITE_ON_BLACK << 8);
+            vga_buffer[index] = (uint16_t)' ' | (uint16_t)(text_color << 8);
         }
     }
 }
@@ -46,7 +55,7 @@ void vga_clear_line() {
 
     for (int x = 0; x < VGA_WIDTH; x++) {
         const int index = y * VGA_WIDTH + x;
-        vga_buffer[index] = (uint16_t)' ' | (uint16_t)(VGA_COL_WHITE_ON_BLACK << 8);
+        vga_buffer[index] = (uint16_t)' ' | (uint16_t)(text_color << 8);
     }
 }
 
@@ -67,7 +76,7 @@ void vga_scroll(int y) {
 
     /* Clear newly exposed rows */
     for (int i = count; i < VGA_WIDTH * VGA_HEIGHT; i++) {
-        vga_buffer[i] = (uint16_t)' ' | (uint16_t)(VGA_COL_WHITE_ON_BLACK << 8);
+        vga_buffer[i] = (uint16_t)' ' | (uint16_t)(text_color << 8);
     }
 }
 
@@ -85,7 +94,7 @@ void vga_write(const char *str) {
 
     for (int i = 0; str[i] != '\0'; i++) {
         if (x >= VGA_WIDTH) break;
-        vga_putc(str[i], VGA_COL_WHITE_ON_BLACK, x, y);
+        vga_putc(str[i], text_color, x, y);
         x++;
     }
 
@@ -102,7 +111,7 @@ void vga_print(const char *str) {
     get_cursor_xy(&x, &y);
 
     for (int i = 0; str[i] != '\0'; i++) {
-        vga_putc(str[i], VGA_COL_WHITE_ON_BLACK, x, y);
+        vga_putc(str[i], text_color, x, y);
         x++;
 
         if (x >= VGA_WIDTH) {
