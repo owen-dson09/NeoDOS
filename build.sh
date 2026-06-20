@@ -1,5 +1,5 @@
 set -e
-rm -r build
+rm -rf build
 mkdir -p build
 
 nasm -f elf32 src/kernel/interrupts/isr.asm -o build/isr_asm.o
@@ -9,7 +9,10 @@ CFILES=$(find src/kernel -name "*.c")
 
 for file in $CFILES; do
     obj="build/$(basename "${file%.c}").o"
-    x86_64-elf-gcc -ffreestanding -m32 -I./include -g -c "$file" -o "$obj"
+    x86_64-elf-gcc -ffreestanding -m32 \
+    -fno-pie -fno-pic -fno-stack-protector \
+    -fno-asynchronous-unwind-tables -fno-unwind-tables \
+    -O0 -I./include -g -c "$file" -o "$obj"
 done
 
 OBJ_FILES=$(find build -name "*.o" ! -name "kernel_entry.o")
