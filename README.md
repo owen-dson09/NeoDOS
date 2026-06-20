@@ -28,23 +28,7 @@ Currently included:
 
 ## Requirements
 
-- NASM
-- x86_64-elf-gcc
-- x86_64-elf-ld
 - QEMU
-
-# Build
-
-```bash
-chmod +x ./build.sh
-./build.sh
-```
-
-This creates:
-
-```
-neodos.img
-```
 
 ## Run
 
