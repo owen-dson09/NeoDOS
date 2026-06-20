@@ -16,7 +16,6 @@ typedef struct {
     uint32_t base;
 } __attribute__((packed)) idt_ptr_t;
 
-void isr_default_handler(void);
 void idt_init(void);
 
 #endif

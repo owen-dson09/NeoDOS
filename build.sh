@@ -1,6 +1,9 @@
 set -e
-
+rm -r build
 mkdir -p build
+
+nasm -f elf32 src/kernel/interrupts/isr.asm -o build/isr_asm.o
+nasm -f elf32 src/kernel/kernel_entry.asm -o build/kernel_entry.o
 
 CFILES=$(find src/kernel -name "*.c")
 
@@ -8,9 +11,6 @@ for file in $CFILES; do
     obj="build/$(basename "${file%.c}").o"
     x86_64-elf-gcc -ffreestanding -m32 -g -c "$file" -o "$obj"
 done
-
-nasm -f elf32 src/kernel/idr.asm -o build/isr.o
-nasm -f elf32 src/kernel/kernel_entry.asm -o build/kernel_entry.o
 
 OBJ_FILES=$(find build -name "*.o" ! -name "kernel_entry.o")
 
