@@ -42,4 +42,8 @@ void isr_handler(registers_t *regs) {
     if (regs->int_num < 32) {
         vga_print(exception_messages[regs->int_num]);
     }
+
+    while (1) {
+        __asm__ __volatile__("cli; hlt");
+    }
 }

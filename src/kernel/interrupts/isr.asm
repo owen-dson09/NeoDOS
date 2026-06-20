@@ -29,6 +29,11 @@ irq%1:
     jmp irq_common_stub
 %endmacro
 
+isr_default_stub:
+    push dword 0
+    push dword 255
+    jmp isr_common_stub
+
 isr_common_stub:
     pusha
 
@@ -54,12 +59,6 @@ isr_common_stub:
     popa
 
     add esp, 8          ; remove int_no and err_code
-    iret
-
-isr_default_stub:
-    pusha
-    call isr_handler
-    popa
     iret
 
 irq_common_stub:
