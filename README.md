@@ -7,6 +7,7 @@ Currently included:
 - 32-bit protected mode kernel
 - VGA text mode driver w/ basic text output functions
 - Remapped PIC and IDT
+- Keyboard driver
 
 ## Features
 
@@ -17,6 +18,11 @@ Currently included:
 - Cursor positioning
 - Screen scrolling
 - Set Text + Background Color
+
+### Keyboard Driver
+
+- Type characters lowercase/uppercase
+- Backspace
 
 ## Requirements
 
@@ -30,7 +36,6 @@ qemu-system-x86_64 -hda neodos.img
 
 ## Planned Features
 
-- Keyboard driver
 - Memory manager
 - FAT filesystem support
 - Command shell

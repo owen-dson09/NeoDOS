@@ -24,9 +24,11 @@ void set_text_color(unsigned char color);
 void set_background_color(unsigned char color);
 void vga_clear();
 void vga_clear_line();
+void vga_backspace(void);
 void vga_scroll(int y);
 void vga_putc(char c, unsigned char color, int x, int y);
 void vga_write(const char *str);
+void vga_wrapwrite(const char *str);
 void vga_print(const char *str);
 
 #endif

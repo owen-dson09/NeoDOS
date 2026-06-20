@@ -59,6 +59,21 @@ void vga_clear_line() {
     }
 }
 
+void vga_backspace(void) {
+    uint16_t pos = get_cursor_pos();
+
+    if (pos == 0)
+        return;
+
+    pos--;
+
+    int x = pos % VGA_WIDTH;
+    int y = pos / VGA_WIDTH;
+
+    vga_putc(' ', text_color, x, y);
+    set_cursor_pos(x, y);
+}
+
 void vga_scroll(int y) {
     if (y <= 0) return;
 
@@ -88,9 +103,21 @@ void vga_putc(char c, uint8_t color, int x, int y) {
 }
 
 void vga_write(const char *str) {
-    uint16_t pos = get_cursor_pos();
-    int x = pos % VGA_WIDTH;
-    int y = pos / VGA_WIDTH;
+    int x, y;
+    get_cursor_xy(&x, &y);
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (x >= VGA_WIDTH) break;
+        vga_putc(str[i], text_color, x, y);
+        x++;
+    }
+
+    set_cursor_pos(x, y);
+}
+
+void vga_wrapwrite(const char *str) {
+    int x, y;
+    get_cursor_xy(&x, &y);
 
     for (int i = 0; str[i] != '\0'; i++) {
         if (x >= VGA_WIDTH) break;
@@ -101,6 +128,11 @@ void vga_write(const char *str) {
     if (x >= VGA_WIDTH) {
         x = 0;
         y++;
+
+        if (y >= VGA_HEIGHT) {
+            vga_scroll(1);
+            y = VGA_HEIGHT - 1;
+        }
     }
 
     set_cursor_pos(x, y);

@@ -19,17 +19,47 @@ static const char scancode_ascii[128] = {
     0, ' ', 0,
 };
 
+static const char scancode_ascii_shift[128] = {
+    0,  27, '!', '@', '#', '$', '%', '^',
+    '&', '*', '(', ')', '_', '+', '\b', '\t',
+
+    'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I',
+    'O', 'P', '{', '}', '\n', 0, 'A', 'S',
+
+    'D', 'F', 'G', 'H', 'J', 'K', 'L', ':',
+    '"', '~', 0, '|', 'Z', 'X', 'C', 'V',
+
+    'B', 'N', 'M', '<', '>', '?', 0, '*',
+    0, ' ', 0,
+};
+
+static uint8_t shift_pressed = 0;
+
 void keyboard_handler(void) {
     uint8_t scancode = inb(KEYBOARD_DATA_PORT);
 
-    if (scancode & 0x80) { // key release
+    if (scancode == 0x2A || scancode == 0x36) { // Shift pressed
+        shift_pressed = 1;
+        return;
+    }
+
+    if (scancode == 0xAA || scancode == 0xB6) { // Shift release
+        shift_pressed = 0;
+        return;
+    }
+
+    if (scancode & 0x80) { // Key release
         return;
     }
 
     char c = 0;
 
     if (scancode < 128) {
-        c = scancode_ascii[scancode];
+        if (shift_pressed) {
+            c = scancode_ascii_shift[scancode];
+        } else {
+            c = scancode_ascii[scancode];
+        }
     }
 
     if (c == 0) {
@@ -39,12 +69,12 @@ void keyboard_handler(void) {
     if (c == '\n') {
         vga_print("");
     } else if (c == '\b') {
-        // backspace
+        vga_backspace();
     } else {
         char str[2];
         str[0] = c;
         str[1] = '\0';
 
-        vga_write(str);
+        vga_wrapwrite(str);
     }
 }
