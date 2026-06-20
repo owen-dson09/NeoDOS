@@ -1,12 +1,11 @@
 #include "vga.h"
+#include "idt.h"
 #include "include/util.h"
 
 void main() {
+    idt_init();
+    __asm__ __volatile__("sti"); // Enable interrupts
+    
     vga_print("NeoDOS Kernel Loaded!");
-    set_text_color(VGA_COL_YELLOW);
-    vga_print("This should be yellow.");
-    set_background_color(VGA_COL_BLUE);
-    set_text_color(VGA_COL_WHITE);
-    vga_print("This should be white on blue.");
     return;
 }
