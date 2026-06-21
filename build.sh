@@ -12,7 +12,7 @@ for file in $CFILES; do
     x86_64-elf-gcc -ffreestanding -m32 \
     -fno-pie -fno-pic -fno-stack-protector \
     -fno-asynchronous-unwind-tables -fno-unwind-tables \
-    -O0 -I./include -g -c "$file" -o "$obj"
+    -I./include -g -c "$file" -o "$obj"
 done
 
 OBJ_FILES=$(find build -name "*.o" ! -name "kernel_entry.o")
