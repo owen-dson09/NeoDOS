@@ -8,13 +8,20 @@
 #define VGA_COL_RED 4
 #define VGA_COL_MAGENTA 5
 #define VGA_COL_BROWN 6
+    #define VGA_COL_ORANGE 6
 #define VGA_COL_LIGHT_GREY 7
+    #define VGA_COL_LIGHT_GRAY 7
 #define VGA_COL_DARK_GREY 8
+    #define VGA_COL_DARK_GRAY 8
+    #define VGA_COL_GREY 8
+    #define VGA_COL_GRAY 8
 #define VGA_COL_LIGHT_BLUE 9
 #define VGA_COL_LIGHT_GREEN 10
+    #define VGA_COL_LIME 10
 #define VGA_COL_LIGHT_CYAN 11
 #define VGA_COL_LIGHT_RED 12
 #define VGA_COL_LIGHT_MAGENTA 13
+    #define VGA_COL_PINK 13
 #define VGA_COL_YELLOW 14
 #define VGA_COL_WHITE 15
 

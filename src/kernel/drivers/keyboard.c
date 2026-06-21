@@ -41,6 +41,10 @@ void keyboard_init(keyboard_callback_t callback) {
     keyboard_callback = callback;
 }
 
+void keyboard_disable(void) {
+    pic_set_mask(1); // Disable keyboard IRQ
+}
+
 void keyboard_handler(void) {
     uint8_t scancode = inb(KEYBOARD_DATA_PORT);
 

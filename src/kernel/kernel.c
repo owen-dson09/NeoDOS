@@ -4,7 +4,7 @@
 #include "interrupts/pic.h"
 #include "util.h"
 
-static void key_press(char c) {
+static void vga_key_press(char c) {
     if (c == '\n') {
         vga_print("");
     } else if (c == '\b') {
@@ -27,7 +27,7 @@ void main() {
         pic_set_mask(i);
     }
 
-    keyboard_init(key_press);       // Enable keyboard, set callback
+    keyboard_init(vga_key_press);         // Enable keyboard, set callback
 
     vga_print("NeoDOS");            // Welcome message
 
