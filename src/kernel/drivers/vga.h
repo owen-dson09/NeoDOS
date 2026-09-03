@@ -25,10 +25,10 @@
 #define VGA_COL_YELLOW 14
 #define VGA_COL_WHITE 15
 
-void setCursorPos(int x, int y);
-unsigned short getCursorPos(void);
-void setTextColor(unsigned char color);
-void setBackgroundColor(unsigned char color);
+void set_cursor_pos(int x, int y);
+unsigned short get_cursor_pos(void);
+void set_text_color(unsigned char color);
+void set_background_color(unsigned char color);
 void vga_clear();
 void vga_clear_line();
 void vga_backspace(void);
