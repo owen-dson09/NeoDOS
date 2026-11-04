@@ -6,7 +6,7 @@
 
 static void vga_key_press(char c) {
     if (c == '\n') {
-        vga_print("");
+        vga_puts("");
     } else if (c == '\b') {
         vga_backspace();
     } else {
@@ -29,7 +29,7 @@ void main() {
 
     keyboard_init(vga_key_press);         // Enable keyboard, set callback
 
-    vga_print("NeoDOS");            // Welcome message
+    vga_puts("NeoDOS");
 
     __asm__ __volatile__("sti");    // Enable interrupts
 
