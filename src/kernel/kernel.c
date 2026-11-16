@@ -2,20 +2,21 @@
 #include "drivers/keyboard.h"
 #include "idt.h"
 #include "interrupts/pic.h"
+#include "shell/shell.h"
 #include "util.h"
 
-static void vga_key_press(char c) {
-    if (c == '\n') {
-        vga_puts("");
-    } else if (c == '\b') {
-        vga_backspace();
-    } else {
-        char str[2];
-        str[0] = c;
-        str[1] = '\0';
+#define KEYBOARD_BUFFER_SIZE 256
 
-        vga_wrapwrite(str);
-    }
+static volatile uint8_t keyboard_buffer[KEYBOARD_BUFFER_SIZE];
+static volatile uint16_t keyboard_buffer_head = 0;
+static volatile uint16_t keyboard_buffer_tail = 0;
+
+static void kernel_key_press(char c) {
+    // Add character to keyboard buffer
+    uint16_t next = (keyboard_buffer_head + 1) % KEYBOARD_BUFFER_SIZE;
+    if (next == keyboard_buffer_tail) return; // Buffer full = discard character
+    keyboard_buffer[keyboard_buffer_head] = c;
+    keyboard_buffer_head = next;
 }
 
 void main() {
@@ -27,14 +28,26 @@ void main() {
         pic_set_mask(i);
     }
 
-    keyboard_init(vga_key_press);         // Enable keyboard, set callback
+    // VGA is already cleared from bootloader, but clear again to be sure
+    vga_clear();
+    setCursorPos(0, 0);
 
-    vga_puts("NeoDOS");
-
-    __asm__ __volatile__("sti");    // Enable interrupts
+    shell_init();
+    keyboard_init(kernel_key_press); // Enable keyboard, set callback
 
     while (1) {
-        __asm__ __volatile__("hlt");
+        __asm__ __volatile__("cli");
+        
+        // Check if there is a character in the keyboard buffer
+        if (keyboard_buffer_head != keyboard_buffer_tail) {
+            char c = keyboard_buffer[keyboard_buffer_tail];
+            keyboard_buffer_tail = (keyboard_buffer_tail + 1) % KEYBOARD_BUFFER_SIZE;
+
+            // Handle the character in the shell
+            shell_handle_char(c);
+        }
+
+        __asm__ __volatile__("sti; hlt");
     }
     return;
 }
