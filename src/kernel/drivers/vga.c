@@ -27,6 +27,14 @@ void getCursorXY(int *x, int *y) {
     *y = pos / VGA_WIDTH;
 }
 
+uint8_t getTextColor(void) {
+    return text_color;
+}
+
+uint8_t getBackgroundColor(void) {
+    return (text_color >> 4) & 0x0F;
+}
+
 void setTextColor(uint8_t color) {
     text_color = (text_color & 0xF0) | color;
 }

@@ -28,9 +28,10 @@ static uint16_t command_length = 0;
 //// END Helper functions ////
 
 static void shell_prompt(void) {
+    uint8_t text_color = getTextColor();
     setTextColor(VGA_COL_GRAY);
     vga_print("-> ");
-    setTextColor(VGA_COL_LIGHT_GRAY);
+    setTextColor(text_color);
 }
 
 static void shell_execute(const char *command) {
@@ -42,19 +43,61 @@ static void shell_execute(const char *command) {
         vga_puts("  clear   - Clear screen");
         vga_puts("  echo    - Print text");
         vga_puts("  version - Show OS version");
+        vga_puts("  color   - Set text color");
     }
     else if (str_eq(command, "clear")) {
         vga_clear();
         setCursorPos(0, 0);
     }
     else if (str_eq(command, "echo")) {
-        vga_puts("");
+        return;
     }
     else if (str_startswith(command, "echo ")) {
         vga_puts(command + 5);
     }
     else if (str_eq(command, "version")) {
         vga_puts("NeoDOS v0.1");
+    }
+    else if (str_eq(command, "color")) {
+        return;
+    }
+    else if (str_startswith(command, "color ")) {
+        const uint8_t *color_str = command + 6;
+        int16_t color = -1;
+
+        if (str_eq(color_str, "black"))             color = VGA_COL_BLACK;
+        else if (str_eq(color_str, "blue"))         color = VGA_COL_BLUE;
+        else if (str_eq(color_str, "green"))        color = VGA_COL_GREEN;
+        else if (str_eq(color_str, "cyan"))         color = VGA_COL_CYAN;
+        else if (str_eq(color_str, "red"))          color = VGA_COL_RED;
+        else if (str_eq(color_str, "magenta"))      color = VGA_COL_MAGENTA;
+        else if (str_eq(color_str, "brown") 
+                || str_eq(color_str, "orange"))     color = VGA_COL_BROWN;
+        else if (str_eq(color_str, "light_gray") 
+                || str_eq(color_str, "light_grey")) color = VGA_COL_LIGHT_GREY;
+        else if (str_eq(color_str, "dark_gray") 
+                || str_eq(color_str, "dark_grey") 
+                || str_eq(color_str, "gray") 
+                || str_eq(color_str, "grey"))       color = VGA_COL_DARK_GREY;
+        else if (str_eq(color_str, "light_blue"))   color = VGA_COL_LIGHT_BLUE;
+        else if (str_eq(color_str, "light_green") 
+                || str_eq(color_str, "lime"))       color = VGA_COL_LIGHT_GREEN;
+        else if (str_eq(color_str, "light_cyan"))   color = VGA_COL_LIGHT_CYAN;
+        else if (str_eq(color_str, "light_red"))    color = VGA_COL_LIGHT_RED;
+        else if (str_eq(color_str, "light_magenta") 
+                || str_eq(color_str, "pink"))       color = VGA_COL_LIGHT_MAGENTA;
+        else if (str_eq(color_str, "yellow"))       color = VGA_COL_YELLOW;
+        else if (str_eq(color_str, "white"))        color = VGA_COL_WHITE;
+
+        if (color != -1) {
+            setTextColor(color);
+        } else {
+            vga_print("Unknown color: ");
+            vga_puts(color_str);
+        }
+    }
+    else if (str_eq(command, "hello")) {
+        vga_puts("Hello world!");
     }
     else {
         vga_print("Unknown command: ");
@@ -66,7 +109,7 @@ void shell_init(void) {
     command_length = 0;
     command_buffer[0] = '\0';
 
-    vga_puts("-- NeoDOS v0.1 --");
+    vga_puts("<< NeoDOS v0.1 >>");
     shell_prompt();
 }
 

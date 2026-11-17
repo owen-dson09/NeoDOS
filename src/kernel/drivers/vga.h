@@ -32,6 +32,8 @@
 
 void setCursorPos(int x, int y);
 unsigned short getCursorPos(void);
+unsigned char getTextColor(void);
+unsigned char getBackgroundColor(void);
 void setTextColor(unsigned char color);
 void setBackgroundColor(unsigned char color);
 void vga_clear();
