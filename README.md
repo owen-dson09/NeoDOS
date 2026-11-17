@@ -38,9 +38,10 @@ qemu-system-x86_64 -hda neodos.img
 
 ## Planned Features
 
+- Memory management (?)
 - FAT filesystem support
-- System calls
-- 
+- System calls for files to interact with each other
+- Disk and system utility programs
 
 ## License
 
