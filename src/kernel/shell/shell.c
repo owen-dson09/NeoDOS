@@ -1,3 +1,4 @@
+#include "../kernel.h"
 #include "shell.h"
 #include "../drivers/vga.h"
 #include "util.h"
@@ -39,11 +40,12 @@ static void shell_execute(const char *command) {
 
     if (str_eq(command, "help")) {
         vga_puts("Available commands:");
-        vga_puts("  help    - Show commands");
-        vga_puts("  clear   - Clear screen");
-        vga_puts("  echo    - Print text");
-        vga_puts("  version - Show OS version");
-        vga_puts("  color   - Set text color");
+        vga_puts("  help     - Show commands");
+        vga_puts("  clear    - Clear screen");
+        vga_puts("  echo     - Print text");
+        vga_puts("  version  - Show OS version");
+        vga_puts("  color    - Set text color");
+        vga_puts("  shutdown - Power off system");
     }
     else if (str_eq(command, "clear")) {
         vga_clear();
@@ -63,7 +65,7 @@ static void shell_execute(const char *command) {
     }
     else if (str_startswith(command, "color ")) {
         const uint8_t *color_str = command + 6;
-        int16_t color = -1;
+        int color = -1;
 
         if (str_eq(color_str, "black"))             color = VGA_COL_BLACK;
         else if (str_eq(color_str, "blue"))         color = VGA_COL_BLUE;
@@ -90,7 +92,7 @@ static void shell_execute(const char *command) {
         else if (str_eq(color_str, "white"))        color = VGA_COL_WHITE;
 
         if (color != -1) {
-            setTextColor(color);
+            setTextColor((uint8_t)color);
         } else {
             vga_print("Unknown color: ");
             vga_puts(color_str);
@@ -98,6 +100,10 @@ static void shell_execute(const char *command) {
     }
     else if (str_eq(command, "hello")) {
         vga_puts("Hello world!");
+    }
+    else if (str_eq(command, "shutdown")) {
+        vga_puts("Shutting down system...");
+        shutdown();
     }
     else {
         vga_print("Unknown command: ");

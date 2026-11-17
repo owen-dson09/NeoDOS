@@ -51,3 +51,15 @@ void main() {
     }
     return;
 }
+
+// Shutdown for QEMU, temporary
+__attribute__((noreturn)) void shutdown() {
+    __asm__ __volatile__("cli");
+
+    outw(0x604, 0x2000); // QEMU shutdown
+    outw(0xB004, 0x2000); // Bochs shutdown
+
+    while (1) {
+        __asm__ __volatile__("hlt");
+    }
+}

@@ -23,7 +23,7 @@ Currently included:
 
 - Basic commands:
 ```
-help, clear, echo, version, color
+help, clear, echo, version, color, shutdown
 ```
 
 ## Requirements
