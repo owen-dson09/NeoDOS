@@ -1,5 +1,5 @@
 [BITS 32]
-section .text
+section .text.start
 global _start
 extern main
 

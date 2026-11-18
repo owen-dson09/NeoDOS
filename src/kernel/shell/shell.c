@@ -36,6 +36,8 @@ static void shell_prompt(void) {
 }
 
 static void shell_execute(const char *command) {
+    while (*command == ' ') command++; // Skip spaces; later implement end trimming
+
     if (str_eq(command, "")) return;
 
     if (str_eq(command, "help")) {

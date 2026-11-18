@@ -3,7 +3,9 @@
 
 CODE_SEG equ gdt_start.code_desc - gdt_start
 DATA_SEG equ gdt_start.data_desc - gdt_start
-kernel_entry equ 0x90000
+
+KERNEL_ENTRY equ 0x10000
+KERNEL_SECTORS equ 20
 
 start:
     cli
@@ -14,20 +16,20 @@ start:
     mov ss, ax
     mov sp, 0x7C00
 
-    mov ax, 0x9000              ; Setup segment for kernel entry (0x9000:0000)
-    mov es, ax
-
     ; Clear screen (set video mode to 80x25 text mode), set cursor pos to (0, 0)
     mov ah, 0x00
     mov al, 0x03
     int 0x10
 
     ; Read sector from disk into memory
-    mov ax, 0x0214              ; AH = 0x02 (read sectors), AL = 20 (num sectors)
-    mov cx, 0x0002              ; CH = 0 (cylinder), CL = 2 (sector)
-    mov dh, 0x00                ; DH = 0 (head), DL = boot disk
+    mov ax, 0x1000                  ; Setup segment for temporary buffer (0x1000:0000)
+    mov es, ax
+    xor bx, bx                      ; ES:BX = buffer address (0x1000:0000)
+
+    mov ax, 0x0200 + KERNEL_SECTORS ; AH = 0x02 (read sectors), AL = num sectors
+    mov cx, 0x0002                  ; CH = 0 (cylinder), CL = 2 (sector)
+    xor dh, dh                      ; DH = 0 (head), DL = boot disk
     mov dl, [BOOT_DRIVE]
-    xor bx, bx                  ; ES:BX = buffer address (0x9000:0000)
     int 0x13
     jc disk_retry
 
@@ -39,16 +41,18 @@ load_pm:
 
     ; Load PM
     lgdt [gdt_descriptor]
+
     mov eax, cr0
     or eax, 1
     mov cr0, eax
+
     jmp CODE_SEG:protected_mode
 
 
 disk_retry:
-    mov ax, 0x0214
+    mov ax, 0x0200 + KERNEL_SECTORS
     mov cx, 0x0002
-    mov dh, 0x00
+    xor dh, dh
     mov dl, [BOOT_DRIVE]
     xor bx, bx
     int 0x13
@@ -75,17 +79,17 @@ gdt_start:
     ; Code segment
     .code_desc:
         dw 0xFFFF
-        dw 0x0
-        db 0x0
+        dw 0x0000
+        db 0x00
         db 0x9A, 0xCF
-        db 0x0
+        db 0x00
     ; Data segment
     .data_desc:
         dw 0xFFFF
-        dw 0x0
-        db 0x0
+        dw 0x0000
+        db 0x00
         db 0x92, 0xCF
-        db 0x0
+        db 0x00
 gdt_end:
 gdt_descriptor:
     dw gdt_end - gdt_start - 1
@@ -100,11 +104,11 @@ protected_mode:
     mov fs, ax
     mov gs, ax
     mov ss, ax
-    mov ebp, 0x90000
+    mov ebp, 0x10000
     mov esp, ebp
 
     ; Jump to kernel entry point
-    jmp CODE_SEG:kernel_entry
+    jmp CODE_SEG:KERNEL_ENTRY
 
 msg_disk_error db 'Failed to read from disk', 0
 BOOT_DRIVE db 0
