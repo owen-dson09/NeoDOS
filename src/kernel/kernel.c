@@ -1,5 +1,6 @@
 #include "drivers/vga.h"
 #include "drivers/keyboard.h"
+#include "drivers/ata.h"
 #include "idt.h"
 #include "interrupts/pic.h"
 #include "shell/shell.h"
