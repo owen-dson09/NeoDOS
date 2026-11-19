@@ -33,6 +33,7 @@ void main() {
     vga_clear();
     setCursorPos(0, 0);
 
+    ata_init();
     shell_init();
     keyboard_init(kernel_key_press); // Enable keyboard, set callback
 
