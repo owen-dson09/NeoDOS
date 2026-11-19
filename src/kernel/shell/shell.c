@@ -1,6 +1,7 @@
 #include "../kernel.h"
 #include "shell.h"
 #include "../drivers/vga.h"
+#include "../drivers/ata.h"
 #include "util.h"
 
 #define COMMAND_BUFFER_SIZE 256
@@ -44,23 +45,15 @@ static void shell_execute(const char *command) {
         vga_puts("Available commands:");
         vga_puts("  help     - Show commands");
         vga_puts("  clear    - Clear screen");
-        vga_puts("  echo     - Print text");
-        vga_puts("  version  - Show OS version");
         vga_puts("  color    - Set text color");
+        vga_puts("  diskinfo - Show disk information");
+        vga_puts("  echo     - Print text");
         vga_puts("  shutdown - Power off system");
+        vga_puts("  version  - Show OS version");
     }
     else if (str_eq(command, "clear")) {
         vga_clear();
         setCursorPos(0, 0);
-    }
-    else if (str_eq(command, "echo")) {
-        return;
-    }
-    else if (str_startswith(command, "echo ")) {
-        vga_puts(command + 5);
-    }
-    else if (str_eq(command, "version")) {
-        vga_puts("NeoDOS v0.1");
     }
     else if (str_eq(command, "color")) {
         return;
@@ -100,12 +93,54 @@ static void shell_execute(const char *command) {
             vga_puts(color_str);
         }
     }
+    else if (str_eq(command, "diskinfo")) {
+        for (uint8_t drive = 0; drive < 2; drive++) {
+            const ata_device_t *device = ata_get_device(drive);
+
+            vga_puts("----------");
+            vga_print("Drive ");
+            vga_print(drive == 0 ? "0" : "1");
+            vga_print(": ");
+
+            if (!device) {
+                vga_puts("Not present");
+                continue;
+            }
+
+            vga_puts(device->model);
+
+            vga_print("Sectors: ");
+            char sector_count_str[12];
+            uint_to_str(device->sector_count, sector_count_str);
+            vga_print(sector_count_str);
+
+            vga_print(", Capacity: ");
+            char capacity_str[12];
+            uint_to_str(device->sector_count * 512 / 1024, capacity_str);
+            vga_print(capacity_str);
+            vga_puts(" KB");
+
+            vga_print("LBA28: ");
+            vga_puts(device->lba28 ? "Yes" : "No");
+            vga_print("LBA48: ");
+            vga_puts(device->lba48 ? "Yes" : "No");
+        }
+    }
+    else if (str_eq(command, "echo")) {
+        return;
+    }
+    else if (str_startswith(command, "echo ")) {
+        vga_puts(command + 5);
+    }
     else if (str_eq(command, "hello")) {
         vga_puts("Hello world!");
     }
     else if (str_eq(command, "shutdown")) {
         vga_puts("Shutting down system...");
         shutdown();
+    }
+    else if (str_eq(command, "version")) {
+        vga_puts("NeoDOS v0.1");
     }
     else {
         vga_print("Unknown command: ");
@@ -116,6 +151,11 @@ static void shell_execute(const char *command) {
 void shell_init(void) {
     command_length = 0;
     command_buffer[0] = '\0';
+
+    setTextColor(VGA_COL_LIGHT_GRAY);
+    setBackgroundColor(VGA_COL_BLACK);
+    vga_clear();
+    setCursorPos(0, 0);
 
     vga_puts("<< NeoDOS v0.1 >>");
     shell_prompt();
@@ -146,13 +186,8 @@ void shell_handle_char(char c) {
         return;
     }
 
-    // Ignore non-printable characters
-    if (c < 32 || c > 126) 
-        return;
-
-    // Prevent overflow
-    if (command_length >= COMMAND_BUFFER_SIZE - 1)
-        return;
+    if (c < 32 || c > 126) return;
+    if (command_length >= COMMAND_BUFFER_SIZE - 1) return;
     
     command_buffer[command_length++] = c;
     command_buffer[command_length] = '\0';

@@ -32,4 +32,35 @@ static inline void io_wait(void) {
     outb(0x80, 0);
 }
 
+static inline void *uint_to_str(uint32_t value, char *buffer) {
+    char temp[11];
+    int i = 0;
+    int j = 0;
+
+    do {
+        temp[i++] = '0' + (value % 10);
+        value /= 10;
+    } while (value > 0);
+
+    while (i > 0) {
+        buffer[j++] = temp[--i];
+    }
+
+    buffer[j] = '\0';
+    return buffer;
+}
+
+static inline char *int_to_str(int32_t value, char *buffer) {
+    if (value < 0) {
+        buffer[0] = '-';
+
+        uint32_t magnitude = 0u - (uint32_t)value;
+        uint_to_str(magnitude, buffer + 1);
+
+        return buffer;
+    }
+
+    return uint_to_str((uint32_t)value, buffer);
+}
+
 #endif

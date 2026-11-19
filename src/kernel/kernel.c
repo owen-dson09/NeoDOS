@@ -21,19 +21,24 @@ static void kernel_key_press(char c) {
 }
 
 void main() {
+    vga_puts("Initializing kernel... ");
+
     idt_init();
+    
+    vga_print("Remapping PIC... ");
     pic_remap();
 
     // Mask PIC (ignore hardware interrupts)
     for (int i = 0; i < 16; i++) {
         pic_set_mask(i);
     }
+    vga_puts("[OK]");
 
-    // VGA is already cleared from bootloader, but clear again to be sure
-    vga_clear();
-    setCursorPos(0, 0);
-
+    vga_print("Initializing ATA PIO driver... ");
     ata_init();
+    vga_puts("[OK]");
+
+    vga_print("Initializing shell... ");
     shell_init();
     keyboard_init(kernel_key_press); // Enable keyboard, set callback
 

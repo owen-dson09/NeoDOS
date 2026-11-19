@@ -66,7 +66,7 @@ static uint16_t identify_buffer[256];
         return -1;
     }
 
-    static int ava_wait_complete(void) {
+    static int ata_wait_complete(void) {
         if (ata_wait_not_busy() != 0) return -1;
         uint8_t status = inb(ATA_STATUS);
         if (status & (ATA_ERR | ATA_DF)) return -1;
