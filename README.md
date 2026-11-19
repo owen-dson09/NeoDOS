@@ -23,7 +23,7 @@ Currently included:
 
 - Basic commands:
 ```
-help, clear, echo, version, color, shutdown
+help, clear, color, diskinfo, echo, shutdown, version
 ```
 
 ## Requirements
@@ -39,7 +39,7 @@ qemu-system-x86_64 -hda neodos.img
 ## Planned Features
 
 - Memory management (?)
-- FAT filesystem support
+- FAT32 filesystem support
 - System calls for files to interact with each other
 - Disk and system utility programs
 
