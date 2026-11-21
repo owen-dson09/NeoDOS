@@ -1,7 +1,9 @@
+/* Interrupt Service Routine Handler */
+
+#include "../drivers/keyboard.h"
+#include "../drivers/vga.h"
 #include "isr.h"
 #include "pic.h"
-#include "../drivers/vga.h"
-#include "../drivers/keyboard.h"
 
 static const char *exception_messages[] = {
     "Division By Zero",
@@ -38,6 +40,7 @@ static const char *exception_messages[] = {
     "Reserved"
 };
 
+// Handle CPU exceptions and software interrupts
 void isr_handler(registers_t *regs) {
     vga_puts("CPU Exception: ");
 
@@ -50,6 +53,7 @@ void isr_handler(registers_t *regs) {
     }
 }
 
+// Handle hardware interrupt requests
 void irq_handler(registers_t *regs) {
     uint8_t irq = regs->int_num - 32;
 

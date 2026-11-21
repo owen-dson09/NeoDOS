@@ -1,3 +1,5 @@
+/* VGA Driver */
+
 #include "vga.h"
 #include "util.h"
 

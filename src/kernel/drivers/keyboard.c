@@ -1,6 +1,7 @@
+/* Basic PS/2 Keyboard Driver */
+
 #include "keyboard.h"
 #include "../interrupts/pic.h"
-#include "vga.h"
 #include "util.h"
 
 #define KEYBOARD_DATA_PORT 0x60

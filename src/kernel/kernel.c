@@ -1,9 +1,9 @@
 #include "drivers/vga.h"
 #include "drivers/keyboard.h"
 #include "drivers/ata.h"
-#include "idt.h"
 #include "interrupts/pic.h"
 #include "shell/shell.h"
+#include "idt.h"
 #include "util.h"
 
 #define KEYBOARD_BUFFER_SIZE 256
@@ -15,7 +15,7 @@ static volatile uint16_t keyboard_buffer_tail = 0;
 static void kernel_key_press(char c) {
     // Add character to keyboard buffer
     uint16_t next = (keyboard_buffer_head + 1) % KEYBOARD_BUFFER_SIZE;
-    if (next == keyboard_buffer_tail) return; // Buffer full = discard character
+    if (next == keyboard_buffer_tail) return;
     keyboard_buffer[keyboard_buffer_head] = c;
     keyboard_buffer_head = next;
 }
@@ -40,23 +40,22 @@ void main() {
 
     vga_print("Initializing shell... ");
     shell_init();
-    keyboard_init(kernel_key_press); // Enable keyboard, set callback
+
+    keyboard_init(kernel_key_press);
 
     while (1) {
         __asm__ __volatile__("cli");
         
-        // Check if there is a character in the keyboard buffer
+        // Check for character
         if (keyboard_buffer_head != keyboard_buffer_tail) {
             char c = keyboard_buffer[keyboard_buffer_tail];
             keyboard_buffer_tail = (keyboard_buffer_tail + 1) % KEYBOARD_BUFFER_SIZE;
 
-            // Handle the character in the shell
             shell_handle_char(c);
         }
 
         __asm__ __volatile__("sti; hlt");
     }
-    return;
 }
 
 // Shutdown for QEMU, temporary

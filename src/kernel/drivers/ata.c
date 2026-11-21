@@ -1,4 +1,4 @@
-/* Basic ATA PIO disk driver */
+/* Basic ATA PIO Disk Driver */
 
 #include "ata.h"
 #include "util.h"
@@ -25,9 +25,7 @@
 
 #define ATA_TIMEOUT 1000000
 
-// Primary ATA Channel
-//   - Drive 0: Master
-//   - Drive 1: Slave
+// Drive 0: Master, Drive 1: Slave
 static ata_device_t ata_devices[2];
 static uint16_t identify_buffer[256];
 

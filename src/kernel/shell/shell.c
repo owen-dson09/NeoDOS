@@ -1,7 +1,7 @@
-#include "../kernel.h"
-#include "shell.h"
 #include "../drivers/vga.h"
 #include "../drivers/ata.h"
+#include "../kernel.h"
+#include "shell.h"
 #include "util.h"
 
 #define COMMAND_BUFFER_SIZE 256
